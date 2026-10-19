@@ -150,7 +150,8 @@ input[type=text] {
   box-shadow: 0 18px 40px rgba(0,0,0,.4);
 }
 .letter p { color: inherit; max-width: none; margin-bottom: .6em; line-height: inherit; }
-.letter .sign { text-align: right; font-weight: 700; }
+.letter .sign { text-align: right; font-weight: 700; white-space: pre-line; }
+.type-caret { display: inline-block; width: 2px; height: 1em; background: var(--paper-ink); margin-left: 2px; vertical-align: -2px; animation: caret 1s steps(1) infinite; }
 
 /* Coupon */
 .coupon { border: 3px dashed var(--gold); border-radius: 16px; padding: 18px; width: 100%; box-sizing: border-box; }
@@ -220,21 +221,31 @@ input[type=text] {
 .lightbox figcaption { font-family: var(--font-hand); font-size: 1.6rem; color: var(--ink); text-align: center; }
 
 /* Three items to open */
-.items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
+.items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
 .item { background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 2px rgba(255,255,255,.14); border-radius: 18px; padding: 12px 6px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 1.1rem; color: var(--ink); animation: bob 3s ease-in-out infinite; }
 .item:nth-child(2) { animation-delay: -1s; } .item:nth-child(3) { animation-delay: -2s; }
-.item svg { width: 100%; max-width: 90px; height: auto; }
+.item svg { width: 100%; max-width: 100px; height: auto; }
 .item.done { box-shadow: inset 0 0 0 2px var(--gold); }
 .item .tick { font-size: .8rem; color: var(--gold); min-height: 1.1em; font-family: var(--font-body); }
 .back { font-size: 1.1rem; padding: 6px 18px; }
+
+/* Retro TV */
+.tv { width: 100%; max-width: 380px; background: #c76b4a; border-radius: 26px; padding: 18px 18px 46px; box-sizing: border-box; position: relative; box-shadow: 0 18px 40px rgba(0,0,0,.45); }
+.tv::before, .tv::after { content: ""; position: absolute; bottom: 14px; width: 18px; height: 18px; border-radius: 50%; background: #3a2e4a; }
+.tv::before { right: 26px; } .tv::after { right: 54px; }
+.tv-screen { background: #111; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; display: grid; place-items: center; }
+.tv-screen video { width: 100%; height: 100%; object-fit: contain; background: #111; display: block; }
+.tv-empty { color: #b9b3d6; font-family: var(--font-display); font-size: 1.3rem; padding: 16px; text-align: center; }
+.tv-antenna { width: 120px; height: 40px; margin-bottom: -6px; }
 
 /* Cassette player */
 .cassette { width: 280px; max-width: 80vw; }
 .reel { transform-box: fill-box; transform-origin: center; }
 .playing .reel { animation: spin 2s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.yt { width: 100%; max-width: 360px; }
-.yt iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 12px; display: block; }
+/* the YouTube player stays out of sight; only the music is heard */
+.yt { position: fixed; left: -9999px; top: 0; width: 320px; height: 180px; opacity: 0; pointer-events: none; }
+.yt iframe { width: 320px; height: 180px; border: 0; }
 .song-title { font-family: var(--font-display); font-size: 1.5rem; color: var(--gold); }
 
 /* Virtual hug */
@@ -266,16 +277,28 @@ const CONFIG = {
   birthdate: "19/10/02",   // her birth date as dd/mm/yy, e.g. "19/10/02". It's also the keypad code.
   from: "Shruti",
   candles: 5,
-  // Photos for the Memories page and the photobooth strip. Put the files in this folder.
-  photos: [
-    { src: "zafrin.png", caption: "this one lives rent free in my head" },
-    { src: "image01.png", caption: "this one is my favorite" },
-    { src: "image02.png", caption: "this one is my second favorite" },
-    { src: "image03.png", caption: "this one is my third favorite" },
-    { src: "image04.png", caption: "this one is my fourth favorite" },
-    { src: "image05.png", caption: "this one is my fifth favorite" },
-    { src: "image06.png", caption: "this one is my sixth favorite" },
-    // { src: "beach.jpg", caption: "write a little line for each photo" },
+  // Photos of you two for the "moments of us" page, each with its own caption. Put the files in this folder.
+  memories: [
+    //{ src: "zafrin.png", caption: "this one lives rent free in my head" },
+    { src: "group01.png", caption: "Well, this is your favorite group photo, i think that was india night!" },
+    { src: "group02.png", caption: "Your First birthday with US" },
+    { src: "group03.png", caption: "Roommates!???" },
+    { src: "group04.png", caption: "First time when we all wear sareeee" },
+    { src: "group05.png", caption: "The day before i lost my passport, talktime. damn itt" },
+    { src: "group06.png", caption: "Fun memories with wrong people" },
+    { src: "group07.png", caption: "You and meeee" },
+    { src: "group08.png", caption: "You me and our beaches" },
+    { src: "group09.png", caption: "After exposing the son of a bach, his 1st and 2nd wife" },
+    { src: "group10.png", caption: "then the 2nd wife joined us" },
+    { src: "group11.png", caption: "CDA new year. that was fun" },
+    { src: "group12.png ", caption: "Low key running out of captions" },
+    { src: "group13 .png", caption: "Ig my favorite picture" },
+    
+    // { src: "us1.jpg", caption: "write a little line for each photo" },
+  ],
+  // Photos of only her, for the photobooth strip.
+  booth: ["zafrin.png", "image1.png", "image2.png", "image3.png", "image4.png", "image5.png", "image6.png",
+    "image7.png", "image8.png", "image9.png", "image10.png", "image11.png", "image12.png", "image13.png", "image14.png"
   ],
   photoCaption: "my favorite versions of you",
   // Your song for the cassette. Put the mp3 in this folder, e.g. "song.mp3". Leave "" to play a birthday tune.
@@ -283,6 +306,8 @@ const CONFIG = {
   // Or paste a YouTube link here instead (no download needed), e.g. "https://www.youtube.com/watch?v=XXXXXXXXXXX"
   youtube: "https://www.youtube.com/watch?v=26H76PJWnmA",
   songTitle: "Magnolia · Laufey",
+  // Your video for the little TV. Put the mp4 in this folder, e.g. "video.mp4".
+  video: "My.mp4",
   reasons: [
     "You've heard my worst rants and you still pick up when I call.",
     "You somehow know when my \"I'm fine\" means I'm not.",
@@ -437,7 +462,9 @@ function catSVG() {
 }
 
 function sceneKeypad() {
-  const want = (CONFIG.birthdate.match(/\d/g) || []).join("");
+  // accepts "19/10/02", "19-10-2002", "19.10.02"... and turns it into the 6-digit code DDMMYY
+  const [bd, bm, by] = (CONFIG.birthdate.match(/\d+/g) || []);
+  const want = by ? String(bd).padStart(2, "0") + String(bm).padStart(2, "0") + String(by).slice(-2).padStart(2, "0") : null;
   show(`
     <h2>Security check, ${CONFIG.name}</h2>
     <p>The guard cat needs your birthday code. Day, month, year.</p>
@@ -473,6 +500,7 @@ function sceneKeypad() {
     $("#unlock", s).onclick = () => {
       const msg = $("#padMsg", s);
       if (typed.length < 6) { msg.textContent = "Six digits please. DD MM YY."; return; }
+      if (!want) { msg.textContent = "Psst, the birth year isn't set in CONFIG yet."; return; }
       if (typed === want) { msg.textContent = "Access granted. Hi bestie 💛"; chime([523, 659, 784, 1046]); setTimeout(sceneQuestion, 900); return; }
       tries++;
       const code = $("#code", s); code.classList.remove("shake"); void code.offsetWidth; code.classList.add("shake");
@@ -593,7 +621,7 @@ function sceneBalloons() {
 
 const opened = new Set();
 let stopMusic = () => {};
-const photoList = () => CONFIG.photos && CONFIG.photos.length ? CONFIG.photos : [{ src: "", caption: "" }];
+const photoList = () => CONFIG.memories && CONFIG.memories.length ? CONFIG.memories : [{ src: "", caption: "" }];
 const picHTML = (src, alt = CONFIG.name) => src ? `<img src="${src}" alt="${alt}">` : `<div class="placeholder">photo goes here</div>`;
 
 function sceneMemories() {
@@ -643,25 +671,26 @@ function sceneMemories() {
 const ICONS = {
   camera: `<svg viewBox="0 0 100 80" aria-hidden="true"><rect x="6" y="18" width="88" height="56" rx="12" fill="#ffcf6e"/><rect x="18" y="10" width="24" height="12" rx="4" fill="#e0a83e"/><circle cx="54" cy="46" r="20" fill="#3a2e4a"/><circle cx="54" cy="46" r="12" fill="#6f6390"/><circle cx="50" cy="42" r="4" fill="#fff" opacity=".7"/><rect x="76" y="26" width="10" height="7" rx="2" fill="#fff"/></svg>`,
   letter: `<svg viewBox="0 0 100 80" aria-hidden="true"><rect x="8" y="14" width="84" height="58" rx="6" fill="#c3b1ff"/><path d="M8 18 L50 50 L92 18" fill="#a993f0"/><path d="M50 40 c-6 -8 -18 -2 -10 8 l10 9 l10 -9 c8 -10 -4 -16 -10 -8z" fill="#ff8fa3"/></svg>`,
+  tv: `<svg viewBox="0 0 100 80" aria-hidden="true"><path d="M38 4 L50 16 L62 4" stroke="#b9b3d6" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="6" y="16" width="88" height="62" rx="12" fill="#c76b4a"/><rect x="14" y="23" width="58" height="46" rx="8" fill="#241c33"/><path d="M38 38 L50 46 L38 54 Z" fill="#ffcf6e"/><circle cx="83" cy="34" r="5" fill="#3a2e4a"/><circle cx="83" cy="50" r="5" fill="#3a2e4a"/></svg>`,
   cassette: `<svg viewBox="0 0 100 80" aria-hidden="true"><rect x="4" y="12" width="92" height="60" rx="8" fill="#3a2e4a"/><rect x="14" y="20" width="72" height="22" rx="4" fill="#ff8fa3"/><circle cx="32" cy="54" r="9" fill="#fbf5ea"/><circle cx="68" cy="54" r="9" fill="#fbf5ea"/><rect x="40" y="50" width="20" height="8" rx="2" fill="#6f6390"/></svg>`
 };
 
 function sceneItems() {
   stopMusic();
-  const items = [["camera", "Photobooth", scenePhotobooth], ["letter", "A letter", sceneLetter], ["cassette", "Our song", sceneCassette]];
+  const items = [["camera", "Photobooth", scenePhotobooth], ["letter", "A letter", sceneLetter], ["cassette", "Our song", sceneCassette], ["tv", "A video", sceneVideo]];
   const all = items.every(([k]) => opened.has(k));
   show(`
     <h2>Tap each one to open</h2>
-    <p>Three little things, all for you.</p>
+    <p>Four little things, all for you.</p>
     <div class="items">${items.map(([k, label]) => `<button type="button" class="item ${opened.has(k) ? "done" : ""}" data-k="${k}">${ICONS[k]}<span>${label}</span><span class="tick">${opened.has(k) ? "opened ✓" : ""}</span></button>`).join("")}</div>
-    ${all ? `<button type="button" id="toHug">One last thing →</button>` : `<p class="small">${3 - opened.size} left to open</p>`}`, s => {
+    ${all ? `<button type="button" id="toHug">One last thing →</button>` : `<p class="small">${items.length - opened.size} left to open</p>`}`, s => {
     s.querySelectorAll(".item").forEach(b => b.onclick = () => { opened.add(b.dataset.k); items.find(([k]) => k === b.dataset.k)[2](); });
     if (all) $("#toHug", s).onclick = sceneHug;
   });
 }
 
 function scenePhotobooth() {
-  const list = photoList().map(p => p.src);
+  const list = CONFIG.booth && CONFIG.booth.length ? CONFIG.booth.slice() : [""];
   let set = list.slice();
   while (set.length < 4) set = set.concat(list);   // enough frames to fill the strip
   const frame = src => `<div class="frame">${picHTML(src)}</div>`;
@@ -692,13 +721,57 @@ function sceneLetter() {
       $("#env", s).classList.add("open"); chime([440, 554, 659]);
       setTimeout(() => {
         show(`
-          <article class="letter">
-            ${CONFIG.letter.map(l => `<p>${l}</p>`).join("")}
-            <p class="sign">${CONFIG.sign.replace("\n", "<br>")}</p>
-          </article>
-          <button type="button" class="ghost back" id="back">← Back</button>`, s2 => { $("#back", s2).onclick = sceneItems; });
+          <article class="letter" id="letter" aria-live="polite"></article>
+          <p class="small" id="skip">tap the letter to show it all</p>
+          <button type="button" class="ghost back" id="back" hidden>← Back</button>`, s2 => typeLetter(s2));
       }, 700);
     };
+  });
+}
+
+function typeLetter(s) {
+  const paper = $("#letter", s), done = () => { $("#skip", s).hidden = true; $("#back", s).hidden = false; };
+  $("#back", s).onclick = sceneItems;
+  const parts = CONFIG.letter.map(t => ({ t, cls: "" })).concat([{ t: CONFIG.sign, cls: "sign" }]);
+  let p = 0, c = 0, el = null, timer = null, skipped = false;
+  const caret = document.createElement("span"); caret.className = "type-caret";
+  function step() {
+    if (skipped) return;
+    if (!el) { el = document.createElement("p"); if (parts[p].cls) el.className = parts[p].cls; paper.appendChild(el); }
+    const text = parts[p].t;
+    c++;
+    el.textContent = text.slice(0, c); el.appendChild(caret);
+    if (c % 3 === 0) tone(1200, 0, .02, "square", .015);
+    if (c >= text.length) {
+      p++; c = 0; el = null;
+      if (p >= parts.length) { caret.remove(); done(); return; }
+      timer = setTimeout(step, 450);   // little pause between paragraphs
+    } else {
+      const ch = text[c - 1];
+      timer = setTimeout(step, ".,!?".includes(ch) ? 220 : 38);
+    }
+  }
+  paper.onclick = () => {
+    if (skipped || p >= parts.length) return;
+    skipped = true; clearTimeout(timer);
+    paper.innerHTML = parts.map(x => `<p class="${x.cls}">${x.t.replace(/\n/g, "<br>")}</p>`).join("");
+    done();
+  };
+  step();
+}
+
+function sceneVideo() {
+  show(`
+    <h2>Press play</h2>
+    <svg class="tv-antenna" viewBox="0 0 120 40" aria-hidden="true"><path d="M30 2 L60 38 L90 2" stroke="#b9b3d6" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+    <div class="tv">
+      <div class="tv-screen">${CONFIG.video
+        ? `<video src="${CONFIG.video}" controls playsinline preload="metadata"></video>`
+        : `<div class="tv-empty">your video goes here 📼</div>`}</div>
+    </div>
+    <button type="button" class="ghost back" id="back">← Back</button>`, s => {
+    const v = $("video", s);
+    $("#back", s).onclick = () => { if (v) v.pause(); sceneItems(); };
   });
 }
 
@@ -714,7 +787,7 @@ function sceneCassette() {
       <g class="reel"><circle cx="184" cy="126" r="18" fill="#fbf5ea"/><path d="M184 112 v28 M170 126 h28" stroke="#3a2e4a" stroke-width="4"/></g>
     </svg>
     <div class="song-title" id="songState">paused</div>
-    <div class="yt" id="yt"></div>
+    <div class="yt" id="yt" aria-hidden="true"></div>
     <button type="button" id="play">▶ Play</button>
     <button type="button" class="ghost back" id="back">← Back</button>`, s => {
     const tape = $("#tape", s), btn = $("#play", s), state = $("#songState", s), yt = $("#yt", s);
