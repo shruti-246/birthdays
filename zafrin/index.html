@@ -244,8 +244,8 @@ input[type=text] {
 .playing .reel { animation: spin 2s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 /* the YouTube player stays out of sight; only the music is heard */
-.yt { position: fixed; left: -9999px; top: 0; width: 320px; height: 180px; opacity: 0; pointer-events: none; }
-.yt iframe { width: 320px; height: 180px; border: 0; }
+.yt { width: 200px; max-width: 60vw; }
+.yt iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 10px; display: block; }
 .song-title { font-family: var(--font-display); font-size: 1.5rem; color: var(--gold); }
 
 /* Virtual hug */
